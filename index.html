@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>英语口语8000句 - 组词造句练习</title>
+    <style>
+        :root {
+            --primary-color: #4f46e5;
+            --primary-hover: #4338ca;
+            --bg-color: #f8fafc;
+            --card-bg: #ffffff;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --border-color: #e2e8f0;
+            --success-color: #10b981;
+            --error-color: #ef4444;
+            --slot-bg: #f1f5f9;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 800px;
+            background: var(--card-bg);
+            border-radius: 16px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 12px;
+        }
+
+        .header h1 {
+            font-size: 1.2rem;
+            color: var(--primary-color);
+            font-weight: 700;
+        }
+
+        .controls-top {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .mode-selector {
+            display: flex;
+            background: var(--slot-bg);
+            padding: 3px;
+            border-radius: 8px;
+            font-size: 0.8rem;
+        }
+
+        .mode-btn {
+            padding: 5px 10px;
+            border: none;
+            border-radius: 6px;
+            background: transparent;
+            color: var(--text-muted);
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+
+        .mode-btn.active {
+            background: #ffffff;
+            color: var(--primary-color);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .progress-badge {
+            background: #e0e7ff;
+            color: var(--primary-color);
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .loading-box {
+            text-align: center;
+            padding: 30px 16px;
+            background: #f1f5f9;
+            border-radius: 12px;
+            color: var(--text-muted);
+            font-size: 0.95rem;
+        }
+
+        .practice-area {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .row-chinese {
+            background-color: #f8fafc;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 16px;
+            text-align: center;
+        }
+
+        .row-chinese .label {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            letter-spacing: 0.05em;
+            margin-bottom: 4px;
+        }
+
+        .row-chinese .text {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--text-main);
+        }
+
+        .row-words-pool {
+            min-height: 70px;
+            padding: 12px;
+            background-color: #fafafa;
+            border: 2px dashed var(--border-color);
+            border-radius: 12px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            align-items: center;
+            justify-content: center;
+            max-height: 180px;
+            overflow-y: auto;
+        }
+
+        .row-answer-slots {
+            min-height: 70px;
+            padding: 12px;
+            background-color: #fff;
+            border-radius: 12px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            align-items: center;
+            justify-content: center;
+            max-height: 180px;
+            overflow-y: auto;
+        }
+
+        .word-chip {
+            background: #ffffff;
+            border: 1.5px solid var(--primary-color);
+            color: var(--primary-color);
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            font-weight: 500;
+            cursor: pointer;
+            user-select: none;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.04);
+        }
+
+        .word-chip:hover {
+            background: var(--primary-color);
+            color: white;
+            transform: translateY(-1px);
+        }
+
+        .slot {
+            min-width: 55px;
+            height: 40px;
+            border-bottom: 2.5px solid var(--text-muted);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 4px;
+            transition: all 0.2s ease;
+        }
+
+        .slot.has-word {
+            border-bottom-color: var(--primary-color);
+        }
+
+        .slot .word-chip {
+            margin: 0;
+            animation: popIn 0.2s ease;
+        }
+
+        @keyframes popIn {
+            from { transform: scale(0.8); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        .feedback-message {
+            text-align: center;
+            font-size: 0.95rem;
+            font-weight: 600;
+            min-height: 24px;
+        }
+
+        .feedback-message.success { color: var(--success-color); }
+        .feedback-message.error { color: var(--error-color); animation: shake 0.4s ease; }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-6px); }
+            40%, 80% { transform: translateX(6px); }
+        }
+
+        .controls-bottom {
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+        }
+
+        .btn {
+            padding: 10px 18px;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s ease;
+        }
+
+        .btn-reset { background-color: var(--slot-bg); color: var(--text-main); }
+        .btn-reset:hover { background-color: #e2e8f0; }
+        .btn-next { background-color: var(--primary-color); color: white; }
+        .btn-next:hover { background-color: var(--primary-hover); }
+
+        /* ==================================================== */
+        /* 📱 手机横屏 (Landscape Mode) 深度专属尺寸优化 */
+        /* ==================================================== */
+        @media screen and (max-height: 550px) and (orientation: landscape) {
+            body {
+                padding: 6px 12px;
+            }
+
+            .container {
+                max-width: 98vw;
+                padding: 12px 16px;
+                gap: 8px;
+                border-radius: 10px;
+            }
+
+            .header {
+                padding-bottom: 6px;
+            }
+
+            .header h1 {
+                font-size: 1rem;
+            }
+
+            .progress-badge, .mode-btn {
+                font-size: 0.75rem;
+                padding: 3px 8px;
+            }
+
+            /* 核心修改：横屏切换为左右双列并行架构 */
+            .practice-area {
+                display: grid;
+                grid-template-columns: 32% 66%;
+                gap: 12px;
+                align-items: start;
+            }
+
+            .left-column {
+                display: flex;
+                flex-direction: column;
+                gap: 8px;
+            }
+
+            .right-column {
+                display: flex;
+                flex-direction: column;
+                gap: 8px;
+            }
+
+            .row-chinese {
+                padding: 10px;
+                border-radius: 8px;
+            }
+
+            .row-chinese .text {
+                font-size: 1.05rem;
+            }
+
+            .row-words-pool, .row-answer-slots {
+                min-height: 55px;
+                max-height: 100px;
+                padding: 6px;
+                gap: 6px;
+                border-radius: 8px;
+            }
+
+            .word-chip {
+                padding: 4px 8px;
+                font-size: 0.85rem;
+                border-radius: 6px;
+            }
+
+            .slot {
+                min-width: 45px;
+                height: 32px;
+            }
+
+            .feedback-message {
+                font-size: 0.85rem;
+                min-height: 18px;
+            }
+
+            .controls-bottom {
+                margin-top: 2px;
+            }
+
+            .btn {
+                padding: 6px 12px;
+                font-size: 0.8rem;
+                border-radius: 6px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="header">
+            <h1>英语口语 8000 句练习</h1>
+            <div class="controls-top">
+                <div class="mode-selector">
+                    <button class="mode-btn active" id="mode-seq" onclick="switchMode('sequence')">顺序播放</button>
+                    <button class="mode-btn" id="mode-rand" onclick="switchMode('random')">随机抽取</button>
+                </div>
+                <div class="progress-badge" id="progress">加载中...</div>
+            </div>
+        </div>
+
+        <div id="loading-status" class="loading-box">
+            <span id="loading-text">正在拉取并校验文本数据...</span>
+            <div id="fallback-upload" style="display: none; margin-top: 10px;">
+                <p style="font-size: 0.8rem; color: #ef4444; margin-bottom: 6px;">无法直接获取线上数据。您可选择本地文件加载：</p>
+                <input type="file" id="local-file" accept=".txt,.text" onchange="handleFileUpload(event)">
+            </div>
+        </div>
+
+        <!-- 主练习区域 -->
+        <div class="practice-area" id="main-practice" style="display: none;">
+            <!-- 左侧区域：中文提示与控制器/反馈（横屏时并列） -->
+            <div class="left-column">
+                <div class="row-chinese">
+                    <div class="label">中文释义</div>
+                    <div class="text" id="chinese-text">...</div>
+                </div>
+                <div class="feedback-message" id="feedback"></div>
+            </div>
+
+            <!-- 右侧区域：单词池与填空区（横屏时并列） -->
+            <div class="right-column">
+                <div>
+                    <div style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 4px;">点击单词填空：</div>
+                    <div class="row-words-pool" id="words-pool"></div>
+                </div>
+
+                <div>
+                    <div style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 4px;">填空区域（点击可撤回）：</div>
+                    <div class="row-answer-slots" id="answer-slots"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="controls-bottom" id="control-bar" style="display: none;">
+            <button class="btn btn-reset" onclick="resetCurrentSentence()">重置本句</button>
+            <button class="btn btn-next" id="next-btn" onclick="nextSentence()">手动下一句 →</button>
+        </div>
+    </div>
+
+    <script>
+        const CDN_URL = "https://cdn.jsdelivr.net/gh/hhl760417/Oral-English-8000-sentences-in-simple@main/%E8%8B%B1%E8%AF%AD%E5%8F%A3%E8%AF%AD8000%E5%8F%A5-%E7%AE%80%E7%89%88";
+        const PRIMARY_URL = "https://raw.githubusercontent.com/hhl760417/Oral-English-8000-sentences-in-simple/main/%E8%8B%B1%E8%AF%AD%E5%8F%A3%E8%AF%AD8000%E5%8F%A5-%E7%AE%80%E7%89%88";
+
+        let validSentences = [];
+        let currentIndex = 0;
+        let originalWords = [];
+        let selectedWords = [];
+        let loadMode = 'sequence';
+        let autoNextTimer = null;
+
+        function switchMode(mode) {
+            loadMode = mode;
+            document.getElementById('mode-seq').classList.toggle('active', mode === 'sequence');
+            document.getElementById('mode-rand').classList.toggle('active', mode === 'random');
+        }
+
+        async function fetchAndFilterData() {
+            const statusText = document.getElementById('loading-text');
+            try {
+                statusText.innerText = "正在从 CDN 获取数据...";
+                let res = await fetch(CDN_URL);
+                if (!res.ok) {
+                    statusText.innerText = "尝试从 GitHub Raw 获取数据...";
+                    res = await fetch(PRIMARY_URL);
+                }
+                if (!res.ok) throw new Error(`HTTP 错误: ${res.status}`);
+
+                const text = await res.text();
+                filterAndInit(text);
+            } catch (err) {
+                console.warn("网络加载受限：", err);
+                statusText.innerText = "网络无法在线读取。您可以提供本地文本文件导入：";
+                document.getElementById('fallback-upload').style.display = 'block';
+            }
+        }
+
+        function filterAndInit(rawText) {
+            const lines = rawText.split(/\r?\n/);
+            validSentences = [];
+
+            lines.forEach(line => {
+                let trimmed = line.trim();
+                if (!trimmed) return;
+
+                trimmed = trimmed.replace(/^\d+[\.\s\、]+/, '');
+
+                const lastParenIdx = Math.max(trimmed.lastIndexOf('('), trimmed.lastIndexOf('（'));
+
+                if (lastParenIdx > 0) {
+                    let enPart = trimmed.substring(0, lastParenIdx).trim();
+                    let cnPart = trimmed.substring(lastParenIdx + 1)
+                                        .replace(/[\)\）]$/, '')
+                                        .trim();
+
+                    if (enPart.length > 0 && cnPart.length > 0 && /[a-zA-Z]/.test(enPart)) {
+                        validSentences.push({
+                            en: enPart,
+                            cn: cnPart
+                        });
+                    }
+                }
+            });
+
+            if (validSentences.length === 0) {
+                alert("未检测到有效数据！请检查文本格式。");
+                return;
+            }
+
+            document.getElementById('loading-status').style.display = 'none';
+            document.getElementById('main-practice').style.display = 'grid';
+            document.getElementById('control-bar').style.display = 'flex';
+
+            loadSentence(0);
+        }
+
+        function handleFileUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                filterAndInit(e.target.result);
+            };
+            reader.readAsText(file);
+        }
+
+        function loadSentence(index) {
+            if (validSentences.length === 0) return;
+            
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+            }
+            if (autoNextTimer) clearTimeout(autoNextTimer);
+
+            currentIndex = index;
+            const current = validSentences[index];
+
+            document.getElementById('chinese-text').innerText = current.cn;
+            document.getElementById('progress').innerText = `${index + 1} / ${validSentences.length}`;
+            document.getElementById('feedback').innerText = '';
+            document.getElementById('feedback').className = 'feedback-message';
+
+            originalWords = current.en.split(/\s+/).filter(w => w.length > 0);
+            
+            let shuffled = [...originalWords];
+            let attempts = 0;
+            while (shuffled.join(' ') === originalWords.join(' ') && shuffled.length > 1 && attempts < 10) {
+                shuffled.sort(() => Math.random() - 0.5);
+                attempts++;
+            }
+
+            selectedWords = new Array(originalWords.length).fill(null);
+
+            renderPool(shuffled);
+            renderSlots();
+        }
+
+        function renderPool(words) {
+            const poolEl = document.getElementById('words-pool');
+            poolEl.innerHTML = '';
+            words.forEach(word => {
+                const chip = document.createElement('div');
+                chip.className = 'word-chip';
+                chip.innerText = word;
+                chip.dataset.word = word;
+                chip.onclick = () => selectWord(chip);
+                poolEl.appendChild(chip);
+            });
+        }
+
+        function renderSlots() {
+            const slotsEl = document.getElementById('answer-slots');
+            slotsEl.innerHTML = '';
+            for (let i = 0; i < originalWords.length; i++) {
+                const slot = document.createElement('div');
+                slot.className = 'slot' + (selectedWords[i] ? ' has-word' : '');
+                
+                if (selectedWords[i]) {
+                    const chip = document.createElement('div');
+                    chip.className = 'word-chip';
+                    chip.innerText = selectedWords[i].word;
+                    chip.onclick = () => deselectWord(i);
+                    slot.appendChild(chip);
+                }
+                
+                slotsEl.appendChild(slot);
+            }
+        }
+
+        function selectWord(chipEl) {
+            const emptyIdx = selectedWords.findIndex(item => item === null);
+            if (emptyIdx !== -1) {
+                selectedWords[emptyIdx] = {
+                    word: chipEl.dataset.word,
+                    element: chipEl
+                };
+                chipEl.style.visibility = 'hidden';
+                renderSlots();
+                checkAnswer();
+            }
+        }
+
+        function deselectWord(slotIndex) {
+            const item = selectedWords[slotIndex];
+            if (item) {
+                item.element.style.visibility = 'visible';
+                selectedWords[slotIndex] = null;
+                document.getElementById('feedback').innerText = '';
+                document.getElementById('feedback').className = 'feedback-message';
+                renderSlots();
+            }
+        }
+
+        function speakSentence(text, callback) {
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = 'en-US';
+                utterance.rate = 0.9;
+
+                utterance.onend = function () {
+                    if (callback) callback();
+                };
+
+                utterance.onerror = function () {
+                    if (callback) callback();
+                };
+
+                window.speechSynthesis.speak(utterance);
+            } else {
+                if (callback) callback();
+            }
+        }
+
+        function checkAnswer() {
+            if (!selectedWords.includes(null)) {
+                const userSentence = selectedWords.map(item => item.word).join(' ');
+                const targetSentence = originalWords.join(' ');
+
+                const feedbackEl = document.getElementById('feedback');
+                if (userSentence === targetSentence) {
+                    feedbackEl.innerText = "🎉 正确！正在朗读...";
+                    feedbackEl.className = "feedback-message success";
+
+                    speakSentence(targetSentence, function() {
+                        feedbackEl.innerText = "🎉 朗读完毕，1 秒后进入下一句...";
+                        autoNextTimer = setTimeout(() => {
+                            nextSentence();
+                        }, 1000);
+                    });
+                } else {
+                    feedbackEl.innerText = "❌ 拼凑顺序有误，请点击错误单词退回。";
+                    feedbackEl.className = "feedback-message error";
+                }
+            }
+        }
+
+        function nextSentence() {
+            if (validSentences.length === 0) return;
+
+            let nextIdx;
+            if (loadMode === 'random') {
+                do {
+                    nextIdx = Math.floor(Math.random() * validSentences.length);
+                } while (nextIdx === currentIndex && validSentences.length > 1);
+            } else {
+                nextIdx = (currentIndex + 1) % validSentences.length;
+            }
+
+            loadSentence(nextIdx);
+        }
+
+        function resetCurrentSentence() {
+            loadSentence(currentIndex);
+        }
+
+        window.onload = fetchAndFilterData;
+    </script>
+</body>
+</html>
