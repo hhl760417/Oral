@@ -215,6 +215,16 @@
             animation: popIn 0.2s ease;
         }
 
+        /* 固定的末尾标点样式 */
+        .ending-punctuation {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            padding: 0 2px;
+            align-self: center;
+            user-select: none;
+        }
+
         @keyframes popIn {
             from { transform: scale(0.8); opacity: 0; }
             to { transform: scale(1); opacity: 1; }
@@ -336,6 +346,10 @@
                 height: 28px;
             }
 
+            .ending-punctuation {
+                font-size: 1.1rem;
+            }
+
             .feedback-message {
                 font-size: 0.75rem;
                 min-height: 16px;
@@ -409,6 +423,8 @@
         let validSentences = [];
         let currentIndex = 0;
         let originalWords = [];
+        let endingPunctuation = ''; // 存储提取出的末尾标点
+        let fullSentenceToSpeak = ''; // 完整的朗读句子（含原标点）
         let selectedWords = [];
         let loadMode = 'sequence';
         let autoNextTimer = null;
@@ -497,14 +513,28 @@
 
             currentIndex = index;
             const current = validSentences[index];
+            fullSentenceToSpeak = current.en;
 
             document.getElementById('chinese-text').innerText = current.cn;
             document.getElementById('progress').innerText = `${index + 1} / ${validSentences.length}`;
             document.getElementById('feedback').innerText = '';
             document.getElementById('feedback').className = 'feedback-message';
 
-            originalWords = current.en.split(/\s+/).filter(w => w.length > 0);
-            
+            // 1. 解析末尾标点符号（., ?, !, ...等）
+            let rawEn = current.en.trim();
+            const puncMatch = rawEn.match(/([.?!,;:]+)$/);
+            if (puncMatch) {
+                endingPunctuation = puncMatch[1];
+                rawEn = rawEn.slice(0, -endingPunctuation.length).trim();
+            } else {
+                endingPunctuation = '';
+            }
+
+            // 2. 拆分单词并去掉单词两端残存的标点
+            const rawTokens = rawEn.split(/\s+/).filter(w => w.length > 0);
+            originalWords = rawTokens.map(word => word.replace(/^[^\w']+|[^\w']+$ me/g, '').replace(/^[^\w']+|[^\w']+$ /g, '').replace(/[.,?!;:"]$/g, ''));
+
+            // 3. 打乱单词顺序
             let shuffled = [...originalWords];
             let attempts = 0;
             while (shuffled.join(' ') === originalWords.join(' ') && shuffled.length > 1 && attempts < 10) {
@@ -534,6 +564,8 @@
         function renderSlots() {
             const slotsEl = document.getElementById('answer-slots');
             slotsEl.innerHTML = '';
+
+            // 渲染填空槽位
             for (let i = 0; i < originalWords.length; i++) {
                 const slot = document.createElement('div');
                 slot.className = 'slot' + (selectedWords[i] ? ' has-word' : '');
@@ -547,6 +579,14 @@
                 }
                 
                 slotsEl.appendChild(slot);
+            }
+
+            // 如果有结尾标点，渲染固定标点元素
+            if (endingPunctuation) {
+                const puncEl = document.createElement('div');
+                puncEl.className = 'ending-punctuation';
+                puncEl.innerText = endingPunctuation;
+                slotsEl.appendChild(puncEl);
             }
         }
 
@@ -605,7 +645,7 @@
                     feedbackEl.innerText = "🎉 正确！正在朗读...";
                     feedbackEl.className = "feedback-message success";
 
-                    speakSentence(targetSentence, function() {
+                    speakSentence(fullSentenceToSpeak, function() {
                         feedbackEl.innerText = "🎉 朗读完毕，1 秒后进入下一句...";
                         autoNextTimer = setTimeout(() => {
                             nextSentence();
