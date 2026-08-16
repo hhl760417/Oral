@@ -42,23 +42,24 @@
             background: var(--card-bg);
             border-radius: 16px;
             box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
-            padding: 24px;
+            padding: 20px;
             display: flex;
             flex-direction: column;
             gap: 16px;
             transition: all 0.3s ease;
         }
 
+        /* 顶栏栏目 */
         .header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             border-bottom: 2px solid var(--border-color);
-            padding-bottom: 12px;
+            padding-bottom: 10px;
         }
 
         .header h1 {
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             color: var(--primary-color);
             font-weight: 700;
         }
@@ -66,19 +67,19 @@
         .controls-top {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 10px;
         }
 
         .mode-selector {
             display: flex;
             background: var(--slot-bg);
-            padding: 3px;
+            padding: 2px;
             border-radius: 8px;
             font-size: 0.8rem;
         }
 
         .mode-btn {
-            padding: 5px 10px;
+            padding: 4px 8px;
             border: none;
             border-radius: 6px;
             background: transparent;
@@ -97,7 +98,7 @@
         .progress-badge {
             background: #e0e7ff;
             color: var(--primary-color);
-            padding: 5px 12px;
+            padding: 4px 10px;
             border-radius: 20px;
             font-size: 0.8rem;
             font-weight: 600;
@@ -105,25 +106,28 @@
 
         .loading-box {
             text-align: center;
-            padding: 30px 16px;
+            padding: 20px 16px;
             background: #f1f5f9;
             border-radius: 12px;
             color: var(--text-muted);
-            font-size: 0.95rem;
+            font-size: 0.9rem;
         }
 
+        /* 核心练习区：3行布局架构 */
         .practice-area {
             display: flex;
             flex-direction: column;
-            gap: 16px;
+            gap: 12px;
         }
 
+        /* 第一行：中文释义 */
         .row-chinese {
             background-color: #f8fafc;
             border: 1px solid var(--border-color);
-            border-radius: 12px;
-            padding: 16px;
+            border-radius: 10px;
+            padding: 12px;
             text-align: center;
+            position: relative;
         }
 
         .row-chinese .label {
@@ -131,41 +135,44 @@
             text-transform: uppercase;
             color: var(--text-muted);
             letter-spacing: 0.05em;
-            margin-bottom: 4px;
+            margin-bottom: 2px;
         }
 
         .row-chinese .text {
-            font-size: 1.2rem;
+            font-size: 1.15rem;
             font-weight: 600;
             color: var(--text-main);
         }
 
+        /* 第二行：待点击单词 */
         .row-words-pool {
-            min-height: 70px;
-            padding: 12px;
+            min-height: 60px;
+            max-height: 140px;
+            padding: 10px;
             background-color: #fafafa;
             border: 2px dashed var(--border-color);
-            border-radius: 12px;
+            border-radius: 10px;
             display: flex;
             flex-wrap: wrap;
             gap: 8px;
             align-items: center;
             justify-content: center;
-            max-height: 180px;
             overflow-y: auto;
         }
 
+        /* 第三行：填空区域 */
         .row-answer-slots {
-            min-height: 70px;
-            padding: 12px;
+            min-height: 60px;
+            max-height: 140px;
+            padding: 10px;
             background-color: #fff;
-            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
             display: flex;
             flex-wrap: wrap;
             gap: 8px;
             align-items: center;
             justify-content: center;
-            max-height: 180px;
             overflow-y: auto;
         }
 
@@ -173,9 +180,9 @@
             background: #ffffff;
             border: 1.5px solid var(--primary-color);
             color: var(--primary-color);
-            padding: 6px 12px;
-            border-radius: 8px;
-            font-size: 0.95rem;
+            padding: 5px 10px;
+            border-radius: 6px;
+            font-size: 0.9rem;
             font-weight: 500;
             cursor: pointer;
             user-select: none;
@@ -186,17 +193,16 @@
         .word-chip:hover {
             background: var(--primary-color);
             color: white;
-            transform: translateY(-1px);
         }
 
         .slot {
-            min-width: 55px;
-            height: 40px;
+            min-width: 45px;
+            height: 36px;
             border-bottom: 2.5px solid var(--text-muted);
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 0 4px;
+            padding: 0 2px;
             transition: all 0.2s ease;
         }
 
@@ -216,9 +222,9 @@
 
         .feedback-message {
             text-align: center;
-            font-size: 0.95rem;
+            font-size: 0.85rem;
             font-weight: 600;
-            min-height: 24px;
+            min-height: 20px;
         }
 
         .feedback-message.success { color: var(--success-color); }
@@ -237,10 +243,10 @@
         }
 
         .btn {
-            padding: 10px 18px;
+            padding: 8px 16px;
             border: none;
             border-radius: 8px;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             font-weight: 600;
             cursor: pointer;
             transition: background 0.2s ease;
@@ -252,94 +258,97 @@
         .btn-next:hover { background-color: var(--primary-hover); }
 
         /* ==================================================== */
-        /* 📱 手机横屏 (Landscape Mode) 深度专属尺寸优化 */
+        /* 📱 手机横屏 (Landscape Mode) 3行布局微型化极致优化 */
         /* ==================================================== */
         @media screen and (max-height: 550px) and (orientation: landscape) {
             body {
-                padding: 6px 12px;
+                padding: 4px 10px;
             }
 
             .container {
                 max-width: 98vw;
-                padding: 12px 16px;
-                gap: 8px;
-                border-radius: 10px;
-            }
-
-            .header {
-                padding-bottom: 6px;
-            }
-
-            .header h1 {
-                font-size: 1rem;
-            }
-
-            .progress-badge, .mode-btn {
-                font-size: 0.75rem;
-                padding: 3px 8px;
-            }
-
-            /* 核心修改：横屏切换为左右双列并行架构 */
-            .practice-area {
-                display: grid;
-                grid-template-columns: 32% 66%;
-                gap: 12px;
-                align-items: start;
-            }
-
-            .left-column {
-                display: flex;
-                flex-direction: column;
-                gap: 8px;
-            }
-
-            .right-column {
-                display: flex;
-                flex-direction: column;
-                gap: 8px;
-            }
-
-            .row-chinese {
-                padding: 10px;
-                border-radius: 8px;
-            }
-
-            .row-chinese .text {
-                font-size: 1.05rem;
-            }
-
-            .row-words-pool, .row-answer-slots {
-                min-height: 55px;
-                max-height: 100px;
-                padding: 6px;
+                padding: 8px 12px;
                 gap: 6px;
                 border-radius: 8px;
             }
 
-            .word-chip {
-                padding: 4px 8px;
-                font-size: 0.85rem;
+            .header {
+                padding-bottom: 4px;
+            }
+
+            .header h1 {
+                font-size: 0.9rem;
+            }
+
+            .progress-badge, .mode-btn {
+                font-size: 0.7rem;
+                padding: 2px 6px;
+            }
+
+            .practice-area {
+                gap: 5px;
+            }
+
+            /* 第一行：中文释义高度极简 */
+            .row-chinese {
+                padding: 5px 8px;
                 border-radius: 6px;
+            }
+
+            .row-chinese .label {
+                display: inline-block;
+                font-size: 0.65rem;
+                margin-bottom: 0;
+                margin-right: 6px;
+            }
+
+            .row-chinese .text {
+                display: inline-block;
+                font-size: 0.95rem;
+            }
+
+            /* 第二行：待点击单词高度适配 */
+            .row-words-pool {
+                min-height: 42px;
+                max-height: 85px;
+                padding: 4px 6px;
+                gap: 5px;
+                border-radius: 6px;
+            }
+
+            /* 第三行：填空区域高度适配 */
+            .row-answer-slots {
+                min-height: 42px;
+                max-height: 85px;
+                padding: 4px 6px;
+                gap: 5px;
+                border-radius: 6px;
+            }
+
+            .word-chip {
+                padding: 3px 6px;
+                font-size: 0.8rem;
+                border-radius: 5px;
             }
 
             .slot {
-                min-width: 45px;
-                height: 32px;
+                min-width: 38px;
+                height: 28px;
             }
 
             .feedback-message {
-                font-size: 0.85rem;
-                min-height: 18px;
+                font-size: 0.75rem;
+                min-height: 16px;
             }
 
             .controls-bottom {
-                margin-top: 2px;
+                margin-top: 0px;
             }
 
             .btn {
-                padding: 6px 12px;
-                font-size: 0.8rem;
-                border-radius: 6px;
+                padding: 4px 10px;
+                font-size: 0.75rem;
+                border-radius: 5px;
             }
         }
     </style>
@@ -347,6 +356,7 @@
 <body>
 
     <div class="container">
+        <!-- 顶部导航与控制 -->
         <div class="header">
             <h1>英语口语 8000 句练习</h1>
             <div class="controls-top">
@@ -360,37 +370,32 @@
 
         <div id="loading-status" class="loading-box">
             <span id="loading-text">正在拉取并校验文本数据...</span>
-            <div id="fallback-upload" style="display: none; margin-top: 10px;">
-                <p style="font-size: 0.8rem; color: #ef4444; margin-bottom: 6px;">无法直接获取线上数据。您可选择本地文件加载：</p>
+            <div id="fallback-upload" style="display: none; margin-top: 8px;">
+                <p style="font-size: 0.75rem; color: #ef4444; margin-bottom: 4px;">网络受限，可导入本地文本文件：</p>
                 <input type="file" id="local-file" accept=".txt,.text" onchange="handleFileUpload(event)">
             </div>
         </div>
 
-        <!-- 主练习区域 -->
+        <!-- 核心练习区域：横屏3行布局 -->
         <div class="practice-area" id="main-practice" style="display: none;">
-            <!-- 左侧区域：中文提示与控制器/反馈（横屏时并列） -->
-            <div class="left-column">
-                <div class="row-chinese">
-                    <div class="label">中文释义</div>
-                    <div class="text" id="chinese-text">...</div>
-                </div>
-                <div class="feedback-message" id="feedback"></div>
+            
+            <!-- 第一行：中文释义 -->
+            <div class="row-chinese">
+                <span class="label">中文：</span>
+                <span class="text" id="chinese-text">...</span>
             </div>
 
-            <!-- 右侧区域：单词池与填空区（横屏时并列） -->
-            <div class="right-column">
-                <div>
-                    <div style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 4px;">点击单词填空：</div>
-                    <div class="row-words-pool" id="words-pool"></div>
-                </div>
+            <!-- 第二行：待点击单词 pool -->
+            <div class="row-words-pool" id="words-pool"></div>
 
-                <div>
-                    <div style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 4px;">填空区域（点击可撤回）：</div>
-                    <div class="row-answer-slots" id="answer-slots"></div>
-                </div>
-            </div>
+            <!-- 第三行：填空区域 answer slots -->
+            <div class="row-answer-slots" id="answer-slots"></div>
+
+            <!-- 反馈提示文本 -->
+            <div class="feedback-message" id="feedback"></div>
         </div>
 
+        <!-- 底部按钮 -->
         <div class="controls-bottom" id="control-bar" style="display: none;">
             <button class="btn btn-reset" onclick="resetCurrentSentence()">重置本句</button>
             <button class="btn btn-next" id="next-btn" onclick="nextSentence()">手动下一句 →</button>
@@ -417,10 +422,9 @@
         async function fetchAndFilterData() {
             const statusText = document.getElementById('loading-text');
             try {
-                statusText.innerText = "正在从 CDN 获取数据...";
+                statusText.innerText = "正在拉取文本数据...";
                 let res = await fetch(CDN_URL);
                 if (!res.ok) {
-                    statusText.innerText = "尝试从 GitHub Raw 获取数据...";
                     res = await fetch(PRIMARY_URL);
                 }
                 if (!res.ok) throw new Error(`HTTP 错误: ${res.status}`);
@@ -467,7 +471,7 @@
             }
 
             document.getElementById('loading-status').style.display = 'none';
-            document.getElementById('main-practice').style.display = 'grid';
+            document.getElementById('main-practice').style.display = 'flex';
             document.getElementById('control-bar').style.display = 'flex';
 
             loadSentence(0);
@@ -608,7 +612,7 @@
                         }, 1000);
                     });
                 } else {
-                    feedbackEl.innerText = "❌ 拼凑顺序有误，请点击错误单词退回。";
+                    feedbackEl.innerText = "❌ 拼凑顺序有误，请点击撤回。";
                     feedbackEl.className = "feedback-message error";
                 }
             }
