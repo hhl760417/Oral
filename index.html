@@ -249,7 +249,12 @@
         .controls-bottom {
             display: flex;
             justify-content: space-between;
-            gap: 12px;
+            gap: 10px;
+        }
+
+        .controls-bottom-left {
+            display: flex;
+            gap: 8px;
         }
 
         .btn {
@@ -259,11 +264,15 @@
             font-size: 0.85rem;
             font-weight: 600;
             cursor: pointer;
-            transition: background 0.2s ease;
+            transition: all 0.2s ease;
         }
 
         .btn-reset { background-color: var(--slot-bg); color: var(--text-main); }
         .btn-reset:hover { background-color: #e2e8f0; }
+        
+        .btn-show { background-color: #fef3c7; color: #d97706; }
+        .btn-show:hover { background-color: #fde68a; }
+
         .btn-next { background-color: var(--primary-color); color: white; }
         .btn-next:hover { background-color: var(--primary-hover); }
 
@@ -411,7 +420,10 @@
 
         <!-- 底部按钮 -->
         <div class="controls-bottom" id="control-bar" style="display: none;">
-            <button class="btn btn-reset" onclick="resetCurrentSentence()">重置本句</button>
+            <div class="controls-bottom-left">
+                <button class="btn btn-reset" onclick="resetCurrentSentence()">重置本句</button>
+                <button class="btn btn-show" onclick="showAnswer()">显示答案</button>
+            </div>
             <button class="btn btn-next" id="next-btn" onclick="nextSentence()">手动下一句 →</button>
         </div>
     </div>
@@ -612,6 +624,35 @@
                 document.getElementById('feedback').className = 'feedback-message';
                 renderSlots();
             }
+        }
+
+        function showAnswer() {
+            resetCurrentSentence();
+            
+            const poolChips = Array.from(document.querySelectorAll('#words-pool .word-chip'));
+            const poolMap = {};
+
+            // 统计待选区每个词元素
+            poolChips.forEach(chip => {
+                const word = chip.dataset.word;
+                if (!poolMap[word]) poolMap[word] = [];
+                poolMap[word].push(chip);
+            });
+
+            // 按正确顺序填充 selectedWords
+            originalWords.forEach((word, index) => {
+                if (poolMap[word] && poolMap[word].length > 0) {
+                    const chipEl = poolMap[word].shift();
+                    selectedWords[index] = {
+                        word: word,
+                        element: chipEl
+                    };
+                    chipEl.style.visibility = 'hidden';
+                }
+            });
+
+            renderSlots();
+            checkAnswer();
         }
 
         function speakSentence(text, callback) {
