@@ -249,6 +249,7 @@
         .controls-bottom {
             display: flex;
             justify-content: space-between;
+            align-items: center;
             gap: 10px;
         }
 
@@ -273,8 +274,60 @@
         .btn-show { background-color: #fef3c7; color: #d97706; }
         .btn-show:hover { background-color: #fde68a; }
 
-        .btn-next { background-color: var(--primary-color); color: white; }
-        .btn-next:hover { background-color: var(--primary-hover); }
+        /* 开关控件 (Switch) 样式 */
+        .switch-container {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-main);
+            user-select: none;
+            cursor: pointer;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 44px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: #cbd5e1;
+            transition: .3s;
+            border-radius: 24px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .3s;
+            border-radius: 50%;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+        }
+
+        input:checked + .slider {
+            background-color: var(--primary-color);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(20px);
+        }
 
         /* ==================================================== */
         /* 📱 手机横屏 (Landscape Mode) 3行布局微型化极致优化 */
@@ -373,6 +426,26 @@
                 font-size: 0.75rem;
                 border-radius: 5px;
             }
+
+            .switch-container {
+                font-size: 0.75rem;
+            }
+
+            .switch {
+                width: 36px;
+                height: 20px;
+            }
+
+            .slider:before {
+                height: 14px;
+                width: 14px;
+                left: 3px;
+                bottom: 3px;
+            }
+
+            input:checked + .slider:before {
+                transform: translateX(16px);
+            }
         }
     </style>
 </head>
@@ -418,13 +491,21 @@
             <div class="feedback-message" id="feedback"></div>
         </div>
 
-        <!-- 底部按钮 -->
+        <!-- 底部按钮/开关栏 -->
         <div class="controls-bottom" id="control-bar" style="display: none;">
             <div class="controls-bottom-left">
                 <button class="btn btn-reset" onclick="resetCurrentSentence()">重置本句</button>
                 <button class="btn btn-show" onclick="showAnswer()">显示答案</button>
             </div>
-            <button class="btn btn-next" id="next-btn" onclick="nextSentence()">手动下一句 →</button>
+            
+            <!-- 开关控件：控制自动/手动切换下一句 -->
+            <label class="switch-container">
+                <span id="switch-label-text">自动跳下一句</span>
+                <div class="switch">
+                    <input type="checkbox" id="auto-switch" checked onchange="toggleAutoSwitch(this)">
+                    <span class="slider"></span>
+                </div>
+            </label>
         </div>
     </div>
 
@@ -435,16 +516,23 @@
         let validSentences = [];
         let currentIndex = 0;
         let originalWords = [];
-        let endingPunctuation = ''; // 存储提取出的末尾标点
-        let fullSentenceToSpeak = ''; // 完整的朗读句子（含原标点）
+        let endingPunctuation = ''; 
+        let fullSentenceToSpeak = ''; 
         let selectedWords = [];
         let loadMode = 'sequence';
+        let autoNextEnabled = true; // 默认开启自动跳转
         let autoNextTimer = null;
 
         function switchMode(mode) {
             loadMode = mode;
             document.getElementById('mode-seq').classList.toggle('active', mode === 'sequence');
             document.getElementById('mode-rand').classList.toggle('active', mode === 'random');
+        }
+
+        function toggleAutoSwitch(checkbox) {
+            autoNextEnabled = checkbox.checked;
+            const labelText = document.getElementById('switch-label-text');
+            labelText.innerText = autoNextEnabled ? "自动跳下一句" : "手动控制";
         }
 
         async function fetchAndFilterData() {
@@ -632,14 +720,12 @@
             const poolChips = Array.from(document.querySelectorAll('#words-pool .word-chip'));
             const poolMap = {};
 
-            // 统计待选区每个词元素
             poolChips.forEach(chip => {
                 const word = chip.dataset.word;
                 if (!poolMap[word]) poolMap[word] = [];
                 poolMap[word].push(chip);
             });
 
-            // 按正确顺序填充 selectedWords
             originalWords.forEach((word, index) => {
                 if (poolMap[word] && poolMap[word].length > 0) {
                     const chipEl = poolMap[word].shift();
@@ -687,10 +773,14 @@
                     feedbackEl.className = "feedback-message success";
 
                     speakSentence(fullSentenceToSpeak, function() {
-                        feedbackEl.innerText = "🎉 朗读完毕，1 秒后进入下一句...";
-                        autoNextTimer = setTimeout(() => {
-                            nextSentence();
-                        }, 1000);
+                        if (autoNextEnabled) {
+                            feedbackEl.innerText = "🎉 朗读完毕，1 秒后进入下一句...";
+                            autoNextTimer = setTimeout(() => {
+                                nextSentence();
+                            }, 1000);
+                        } else {
+                            feedbackEl.innerText = "🎉 朗读完毕！(当前为手动模式)";
+                        }
                     });
                 } else {
                     feedbackEl.innerText = "❌ 拼凑顺序有误，请点击撤回。";
