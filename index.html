@@ -251,10 +251,12 @@
             justify-content: space-between;
             align-items: center;
             gap: 10px;
+            flex-wrap: wrap;
         }
 
-        .controls-bottom-left {
+        .controls-bottom-left, .controls-bottom-right {
             display: flex;
+            align-items: center;
             gap: 8px;
         }
 
@@ -274,23 +276,27 @@
         .btn-show { background-color: #fef3c7; color: #d97706; }
         .btn-show:hover { background-color: #fde68a; }
 
+        .btn-next { background-color: var(--primary-color); color: white; }
+        .btn-next:hover { background-color: var(--primary-hover); }
+
         /* 开关控件 (Switch) 样式 */
         .switch-container {
             display: flex;
             align-items: center;
-            gap: 8px;
-            font-size: 0.85rem;
+            gap: 6px;
+            font-size: 0.82rem;
             font-weight: 600;
-            color: var(--text-main);
+            color: var(--text-muted);
             user-select: none;
             cursor: pointer;
+            margin-right: 4px;
         }
 
         .switch {
             position: relative;
             display: inline-block;
-            width: 44px;
-            height: 24px;
+            width: 40px;
+            height: 22px;
         }
 
         .switch input {
@@ -305,14 +311,14 @@
             top: 0; left: 0; right: 0; bottom: 0;
             background-color: #cbd5e1;
             transition: .3s;
-            border-radius: 24px;
+            border-radius: 22px;
         }
 
         .slider:before {
             position: absolute;
             content: "";
-            height: 18px;
-            width: 18px;
+            height: 16px;
+            width: 16px;
             left: 3px;
             bottom: 3px;
             background-color: white;
@@ -326,7 +332,7 @@
         }
 
         input:checked + .slider:before {
-            transform: translateX(20px);
+            transform: translateX(18px);
         }
 
         /* ==================================================== */
@@ -432,13 +438,13 @@
             }
 
             .switch {
-                width: 36px;
-                height: 20px;
+                width: 34px;
+                height: 18px;
             }
 
             .slider:before {
-                height: 14px;
-                width: 14px;
+                height: 12px;
+                width: 12px;
                 left: 3px;
                 bottom: 3px;
             }
@@ -498,14 +504,18 @@
                 <button class="btn btn-show" onclick="showAnswer()">显示答案</button>
             </div>
             
-            <!-- 开关控件：控制自动/手动切换下一句 -->
-            <label class="switch-container">
-                <span id="switch-label-text">自动跳下一句</span>
-                <div class="switch">
-                    <input type="checkbox" id="auto-switch" checked onchange="toggleAutoSwitch(this)">
-                    <span class="slider"></span>
-                </div>
-            </label>
+            <div class="controls-bottom-right">
+                <!-- 开关控件：控制自动/手动切换下一句 -->
+                <label class="switch-container">
+                    <span id="switch-label-text">自动</span>
+                    <div class="switch">
+                        <input type="checkbox" id="auto-switch" checked onchange="toggleAutoSwitch(this)">
+                        <span class="slider"></span>
+                    </div>
+                </label>
+                <!-- 下一句按钮（随时可手动切句） -->
+                <button class="btn btn-next" id="next-btn" onclick="nextSentence()">下一句 →</button>
+            </div>
         </div>
     </div>
 
@@ -532,7 +542,7 @@
         function toggleAutoSwitch(checkbox) {
             autoNextEnabled = checkbox.checked;
             const labelText = document.getElementById('switch-label-text');
-            labelText.innerText = autoNextEnabled ? "自动跳下一句" : "手动控制";
+            labelText.innerText = autoNextEnabled ? "自动" : "手动";
         }
 
         async function fetchAndFilterData() {
@@ -779,7 +789,7 @@
                                 nextSentence();
                             }, 1000);
                         } else {
-                            feedbackEl.innerText = "🎉 朗读完毕！(当前为手动模式)";
+                            feedbackEl.innerText = "🎉 朗读完毕！(点击“下一句”切换)";
                         }
                     });
                 } else {
