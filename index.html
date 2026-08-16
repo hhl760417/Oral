@@ -23,6 +23,7 @@
             margin: 0;
             padding: 0;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            -webkit-tap-highlight-color: transparent;
         }
 
         body {
@@ -216,6 +217,7 @@
             font-weight: 500;
             cursor: pointer;
             user-select: none;
+            -webkit-user-select: none;
             transition: all 0.2s ease;
             box-shadow: 0 2px 4px rgba(0,0,0,0.04);
         }
@@ -365,123 +367,170 @@
             transform: translateX(18px);
         }
 
-        /* ==================================================== */
-        /* 📱 手机横屏 (Landscape Mode) 3行布局微型化极致优化 */
-        /* ==================================================== */
+        /* ------------------------------------ */
+        /* 📖 单词词典弹窗 (Modal) 样式 */
+        /* ------------------------------------ */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(15, 23, 42, 0.5);
+            backdrop-filter: blur(4px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.25s ease;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal-card {
+            background: #ffffff;
+            width: 90%;
+            max-width: 480px;
+            max-height: 80vh;
+            border-radius: 16px;
+            box-shadow: 0 20px 25px -5px rgba(0,0,0,0.2);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            transform: translateY(20px);
+            transition: transform 0.25s ease;
+            overflow-y: auto;
+        }
+
+        .modal-overlay.active .modal-card {
+            transform: translateY(0);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 8px;
+        }
+
+        .modal-word-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .modal-close-btn {
+            background: transparent;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--text-muted);
+            cursor: pointer;
+            padding: 0 4px;
+            line-height: 1;
+        }
+
+        .modal-phonetic {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            font-style: italic;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .audio-icon-btn {
+            border: none;
+            background: #e0e7ff;
+            color: var(--primary-color);
+            border-radius: 50%;
+            width: 26px;
+            height: 26px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 0.85rem;
+        }
+
+        .dict-section {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .dict-section-title {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--text-main);
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+        }
+
+        .dict-pos-badge {
+            display: inline-block;
+            background: #f1f5f9;
+            color: #475569;
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 2px 6px;
+            border-radius: 4px;
+            margin-right: 6px;
+        }
+
+        .dict-list {
+            list-style: none;
+            padding-left: 0;
+            font-size: 0.88rem;
+            color: var(--text-main);
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .dict-list li {
+            line-height: 1.4;
+            background: #f8fafc;
+            padding: 8px;
+            border-radius: 6px;
+            border-left: 3px solid var(--primary-color);
+        }
+
+        .dict-example {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-top: 3px;
+            font-style: italic;
+        }
+
+        /* 📱 手机横屏 (Landscape Mode) 微型适配 */
         @media screen and (max-height: 550px) and (orientation: landscape) {
-            body {
-                padding: 4px 10px;
-            }
-
-            .container {
-                max-width: 98vw;
-                padding: 8px 12px;
-                gap: 6px;
-                border-radius: 8px;
-            }
-
-            .header {
-                padding-bottom: 4px;
-            }
-
-            .header h1 {
-                font-size: 0.85rem;
-            }
-
-            .version-btn, .progress-badge, .mode-btn {
-                font-size: 0.7rem;
-                padding: 2px 6px;
-            }
-
-            .practice-area {
-                gap: 5px;
-            }
-
-            /* 第一行：中文释义高度极简 */
-            .row-chinese {
-                padding: 5px 8px;
-                border-radius: 6px;
-            }
-
-            .row-chinese .label {
-                display: inline-block;
-                font-size: 0.65rem;
-                margin-bottom: 0;
-                margin-right: 6px;
-            }
-
-            .row-chinese .text {
-                display: inline-block;
-                font-size: 0.95rem;
-            }
-
-            /* 第二行：待点击单词高度适配 */
-            .row-words-pool {
-                min-height: 42px;
-                max-height: 85px;
-                padding: 4px 6px;
-                gap: 5px;
-                border-radius: 6px;
-            }
-
-            /* 第三行：填空区域高度适配 */
-            .row-answer-slots {
-                min-height: 42px;
-                max-height: 85px;
-                padding: 4px 6px;
-                gap: 5px;
-                border-radius: 6px;
-            }
-
-            .word-chip {
-                padding: 3px 6px;
-                font-size: 0.8rem;
-                border-radius: 5px;
-            }
-
-            .slot {
-                min-width: 38px;
-                height: 28px;
-            }
-
-            .ending-punctuation {
-                font-size: 1.1rem;
-            }
-
-            .feedback-message {
-                font-size: 0.75rem;
-                min-height: 16px;
-            }
-
-            .controls-bottom {
-                margin-top: 0px;
-            }
-
-            .btn {
-                padding: 4px 10px;
-                font-size: 0.75rem;
-                border-radius: 5px;
-            }
-
-            .switch-container {
-                font-size: 0.75rem;
-            }
-
-            .switch {
-                width: 34px;
-                height: 18px;
-            }
-
-            .slider:before {
-                height: 12px;
-                width: 12px;
-                left: 3px;
-                bottom: 3px;
-            }
-
-            input:checked + .slider:before {
-                transform: translateX(16px);
-            }
+            body { padding: 4px 10px; }
+            .container { max-width: 98vw; padding: 8px 12px; gap: 6px; border-radius: 8px; }
+            .header { padding-bottom: 4px; }
+            .header h1 { font-size: 0.85rem; }
+            .version-btn, .progress-badge, .mode-btn { font-size: 0.7rem; padding: 2px 6px; }
+            .practice-area { gap: 5px; }
+            .row-chinese { padding: 5px 8px; border-radius: 6px; }
+            .row-chinese .label { display: inline-block; font-size: 0.65rem; margin-bottom: 0; margin-right: 6px; }
+            .row-chinese .text { display: inline-block; font-size: 0.95rem; }
+            .row-words-pool, .row-answer-slots { min-height: 42px; max-height: 85px; padding: 4px 6px; gap: 5px; border-radius: 6px; }
+            .word-chip { padding: 3px 6px; font-size: 0.8rem; border-radius: 5px; }
+            .slot { min-width: 38px; height: 28px; }
+            .ending-punctuation { font-size: 1.1rem; }
+            .feedback-message { font-size: 0.75rem; min-height: 16px; }
+            .btn { padding: 4px 10px; font-size: 0.75rem; border-radius: 5px; }
+            .switch-container { font-size: 0.75rem; }
+            .switch { width: 34px; height: 18px; }
+            .slider:before { height: 12px; width: 12px; left: 3px; bottom: 3px; }
+            input:checked + .slider:before { transform: translateX(16px); }
+            .modal-card { max-height: 90vh; padding: 12px; }
         }
     </style>
 </head>
@@ -556,6 +605,25 @@
         </div>
     </div>
 
+    <!-- 📖 在线单词词典长按弹窗 -->
+    <div class="modal-overlay" id="dict-modal" onclick="closeDictModal(event)">
+        <div class="modal-card" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <div class="modal-word-title">
+                    <span id="modal-word-name">Word</span>
+                    <button class="audio-icon-btn" id="modal-audio-btn" title="朗读单词" onclick="playWordAudio()">🔊</button>
+                </div>
+                <button class="modal-close-btn" onclick="closeDictModal()">&times;</button>
+            </div>
+            
+            <div class="modal-phonetic" id="modal-phonetic">/ ... /</div>
+
+            <div id="modal-content-body">
+                <div style="text-align: center; color: var(--text-muted); padding: 15px 0;">正在查询词典...</div>
+            </div>
+        </div>
+    </div>
+
     <script>
         // 数据源配置
         const DATA_SOURCES = {
@@ -579,6 +647,7 @@
         let loadMode = 'sequence';
         let autoNextEnabled = true;
         let autoNextTimer = null;
+        let currentLookupWord = '';
 
         function switchVersion(ver) {
             if (currentVersion === ver) return;
@@ -695,7 +764,6 @@
             document.getElementById('feedback').innerText = '';
             document.getElementById('feedback').className = 'feedback-message';
 
-            // 1. 解析末尾标点符号（., ?, !, ...等）
             let rawEn = current.en.trim();
             const puncMatch = rawEn.match(/([.?!,;:]+)$/);
             if (puncMatch) {
@@ -705,11 +773,9 @@
                 endingPunctuation = '';
             }
 
-            // 2. 拆分单词并去掉单词两端残存的标点
             const rawTokens = rawEn.split(/\s+/).filter(w => w.length > 0);
             originalWords = rawTokens.map(word => word.replace(/^[^\w']+|[^\w']+$ me/g, '').replace(/^[^\w']+|[^\w']+$ /g, '').replace(/[.,?!;:"]$/g, ''));
 
-            // 3. 打乱单词顺序
             let shuffled = [...originalWords];
             let attempts = 0;
             while (shuffled.join(' ') === originalWords.join(' ') && shuffled.length > 1 && attempts < 10) {
@@ -731,7 +797,9 @@
                 chip.className = 'word-chip';
                 chip.innerText = word;
                 chip.dataset.word = word;
-                chip.onclick = () => selectWord(chip);
+                
+                // 绑定长按字典查询与单点操作
+                attachLongPressEvents(chip, () => selectWord(chip));
                 poolEl.appendChild(chip);
             });
         }
@@ -748,7 +816,10 @@
                     const chip = document.createElement('div');
                     chip.className = 'word-chip';
                     chip.innerText = selectedWords[i].word;
-                    chip.onclick = () => deselectWord(i);
+                    chip.dataset.word = selectedWords[i].word;
+                    
+                    // 绑定长按字典查询与撤回操作
+                    attachLongPressEvents(chip, () => deselectWord(i));
                     slot.appendChild(chip);
                 }
                 
@@ -761,6 +832,153 @@
                 puncEl.innerText = endingPunctuation;
                 slotsEl.appendChild(puncEl);
             }
+        }
+
+        /* ------------------------------------ */
+        /* 📱 长按与点击逻辑（兼容移动端/桌面端） */
+        /* ------------------------------------ */
+        function attachLongPressEvents(element, onClickCallback) {
+            let timer = null;
+            let isLongPress = false;
+            let startX = 0, startY = 0;
+
+            const start = (e) => {
+                isLongPress = false;
+                if (e.touches && e.touches.length > 0) {
+                    startX = e.touches[0].clientX;
+                    startY = e.touches[0].clientY;
+                }
+                timer = setTimeout(() => {
+                    isLongPress = true;
+                    if (navigator.vibrate) navigator.vibrate(40); // 震动反馈
+                    const word = element.dataset.word;
+                    if (word) fetchWordDictionary(word);
+                }, 350); // 350ms 触发长按
+            };
+
+            const cancel = (e) => {
+                if (timer) clearTimeout(timer);
+                // 滑动超过阈值不视为长按也不触发点击
+                if (e && e.touches && e.touches.length > 0) {
+                    const moveX = Math.abs(e.touches[0].clientX - startX);
+                    const moveY = Math.abs(e.touches[0].clientY - startY);
+                    if (moveX > 10 || moveY > 10) {
+                        isLongPress = true; // 阻止后续click
+                    }
+                }
+            };
+
+            const click = (e) => {
+                if (timer) clearTimeout(timer);
+                if (!isLongPress) {
+                    onClickCallback();
+                }
+            };
+
+            element.addEventListener('touchstart', start, { passive: true });
+            element.addEventListener('touchend', click);
+            element.addEventListener('touchmove', cancel, { passive: true });
+
+            element.addEventListener('mousedown', start);
+            element.addEventListener('mouseup', click);
+            element.addEventListener('mouseleave', cancel);
+        }
+
+        /* ------------------------------------ */
+        /* 🌐 在线获取单词音标、释义、短语API */
+        /* ------------------------------------ */
+        async function fetchWordDictionary(rawWord) {
+            // 清理单词（去标点与两端空白）
+            const cleanWord = rawWord.replace(/^[^\w']+|[^\w']+$ /g, '').toLowerCase().trim();
+            currentLookupWord = cleanWord;
+
+            const modal = document.getElementById('dict-modal');
+            const nameEl = document.getElementById('modal-word-name');
+            const phoneticEl = document.getElementById('modal-phonetic');
+            const bodyEl = document.getElementById('modal-content-body');
+
+            nameEl.innerText = cleanWord;
+            phoneticEl.innerText = '/ 查询中... /';
+            bodyEl.innerHTML = '<div style="text-align: center; color: var(--text-muted); padding: 15px 0;">正在查询在线词典...</div>';
+            
+            modal.classList.add('active');
+
+            try {
+                const res = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${cleanWord}`);
+                if (!res.ok) throw new Error("未找到该单词的详细解释");
+
+                const data = await res.json();
+                const entry = data[0];
+
+                // 1. 获取音标
+                let phonetic = entry.phonetic || '';
+                if (!phonetic && entry.phonetics && entry.phonetics.length > 0) {
+                    const pWithText = entry.phonetics.find(p => p.text);
+                    if (pWithText) phonetic = pWithText.text;
+                }
+                phoneticEl.innerText = phonetic ? phonetic : '/ IPA /';
+
+                // 2. 解析常用释义与短语例句
+                let htmlStr = '';
+
+                if (entry.meanings && entry.meanings.length > 0) {
+                    htmlStr += '<div class="dict-section"><div class="dict-section-title">常用释义</div><ul class="dict-list">';
+                    
+                    entry.meanings.forEach(m => {
+                        const pos = m.partOfSpeech;
+                        const defObj = m.definitions[0]; // 取最常用的一条释义
+                        if (defObj) {
+                            htmlStr += `<li>
+                                <div><span class="dict-pos-badge">${pos}</span>${defObj.definition}</div>
+                                ${defObj.example ? `<div class="dict-example">例: "${defObj.example}"</div>` : ''}
+                            </li>`;
+                        }
+                    });
+
+                    htmlStr += '</ul></div>';
+
+                    // 收集短语 / 近义词 (Synonyms)
+                    let synonyms = [];
+                    entry.meanings.forEach(m => {
+                        if (m.synonyms && m.synonyms.length > 0) synonyms.push(...m.synonyms);
+                        m.definitions.forEach(d => {
+                            if (d.synonyms && d.synonyms.length > 0) synonyms.push(...d.synonyms);
+                        });
+                    });
+
+                    synonyms = [...new Set(synonyms)].slice(0, 5); // 去重并取前5个
+
+                    if (synonyms.length > 0) {
+                        htmlStr += `<div class="dict-section" style="margin-top: 8px;">
+                            <div class="dict-section-title">常见同义词/短语</div>
+                            <div style="font-size: 0.85rem; color: var(--text-muted); gap: 6px; display: flex; flex-wrap: wrap; margin-top: 4px;">
+                                ${synonyms.map(s => `<span style="background: #eef2ff; color: var(--primary-color); padding: 2px 8px; border-radius: 12px; font-weight: 500;">${s}</span>`).join('')}
+                            </div>
+                        </div>`;
+                    }
+                } else {
+                    htmlStr = '<div style="font-size: 0.85rem; color: var(--text-muted);">暂无该单词的详细词条说明。</div>';
+                }
+
+                bodyEl.innerHTML = htmlStr;
+
+            } catch (err) {
+                phoneticEl.innerText = '';
+                bodyEl.innerHTML = `<div style="text-align: center; color: var(--text-muted); padding: 15px 0;">
+                    <p style="margin-bottom: 6px;">未在词典库中查找到该词</p>
+                    <span style="font-size: 0.8rem; color: #94a3b8;">(${err.message})</span>
+                </div>`;
+            }
+        }
+
+        function playWordAudio() {
+            if (currentLookupWord) {
+                speakSentence(currentLookupWord);
+            }
+        }
+
+        function closeDictModal(e) {
+            document.getElementById('dict-modal').classList.remove('active');
         }
 
         function selectWord(chipEl) {
