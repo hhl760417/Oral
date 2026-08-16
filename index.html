@@ -367,9 +367,7 @@
             transform: translateX(18px);
         }
 
-        /* ------------------------------------ */
         /* 📖 单词词典弹窗 (Modal) 样式 */
-        /* ------------------------------------ */
         .modal-overlay {
             position: fixed;
             top: 0; left: 0; right: 0; bottom: 0;
@@ -509,7 +507,7 @@
             font-style: italic;
         }
 
-        /* 📱 手机横屏 (Landscape Mode) 微型适配 */
+        /* 📱 手机横屏微型适配 */
         @media screen and (max-height: 550px) and (orientation: landscape) {
             body { padding: 4px 10px; }
             .container { max-width: 98vw; padding: 8px 12px; gap: 6px; border-radius: 8px; }
@@ -798,7 +796,6 @@
                 chip.innerText = word;
                 chip.dataset.word = word;
                 
-                // 绑定长按字典查询与单点操作
                 attachLongPressEvents(chip, () => selectWord(chip));
                 poolEl.appendChild(chip);
             });
@@ -818,7 +815,6 @@
                     chip.innerText = selectedWords[i].word;
                     chip.dataset.word = selectedWords[i].word;
                     
-                    // 绑定长按字典查询与撤回操作
                     attachLongPressEvents(chip, () => deselectWord(i));
                     slot.appendChild(chip);
                 }
@@ -835,60 +831,89 @@
         }
 
         /* ------------------------------------ */
-        /* 📱 长按与点击逻辑（兼容移动端/桌面端） */
+        /* 📱 修复后的长按与点击防重复触发逻辑 */
         /* ------------------------------------ */
         function attachLongPressEvents(element, onClickCallback) {
             let timer = null;
             let isLongPress = false;
+            let touchHandled = false;
             let startX = 0, startY = 0;
 
-            const start = (e) => {
+            const startTouch = (e) => {
                 isLongPress = false;
+                touchHandled = false;
                 if (e.touches && e.touches.length > 0) {
                     startX = e.touches[0].clientX;
                     startY = e.touches[0].clientY;
                 }
                 timer = setTimeout(() => {
                     isLongPress = true;
-                    if (navigator.vibrate) navigator.vibrate(40); // 震动反馈
+                    if (navigator.vibrate) navigator.vibrate(40);
                     const word = element.dataset.word;
                     if (word) fetchWordDictionary(word);
-                }, 350); // 350ms 触发长按
+                }, 380);
             };
 
-            const cancel = (e) => {
-                if (timer) clearTimeout(timer);
-                // 滑动超过阈值不视为长按也不触发点击
-                if (e && e.touches && e.touches.length > 0) {
-                    const moveX = Math.abs(e.touches[0].clientX - startX);
-                    const moveY = Math.abs(e.touches[0].clientY - startY);
-                    if (moveX > 10 || moveY > 10) {
-                        isLongPress = true; // 阻止后续click
-                    }
-                }
-            };
-
-            const click = (e) => {
+            const endTouch = (e) => {
                 if (timer) clearTimeout(timer);
                 if (!isLongPress) {
+                    touchHandled = true;
                     onClickCallback();
                 }
             };
 
-            element.addEventListener('touchstart', start, { passive: true });
-            element.addEventListener('touchend', click);
-            element.addEventListener('touchmove', cancel, { passive: true });
+            const moveTouch = (e) => {
+                if (e && e.touches && e.touches.length > 0) {
+                    const moveX = Math.abs(e.touches[0].clientX - startX);
+                    const moveY = Math.abs(e.touches[0].clientY - startY);
+                    if (moveX > 10 || moveY > 10) {
+                        if (timer) clearTimeout(timer);
+                        isLongPress = true; // 产生拖动则取消长按和点击
+                    }
+                }
+            };
 
-            element.addEventListener('mousedown', start);
-            element.addEventListener('mouseup', click);
-            element.addEventListener('mouseleave', cancel);
+            element.addEventListener('touchstart', startTouch, { passive: true });
+            element.addEventListener('touchend', (e) => {
+                endTouch(e);
+            });
+            element.addEventListener('touchmove', moveTouch, { passive: true });
+
+            // 针对 PC 端的 Click（防止 Touch 与 Click 叠加触发）
+            element.addEventListener('click', (e) => {
+                if (touchHandled) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    touchHandled = false;
+                    return;
+                }
+                if (!isLongPress) {
+                    onClickCallback();
+                }
+            });
+
+            element.addEventListener('mousedown', (e) => {
+                isLongPress = false;
+                timer = setTimeout(() => {
+                    isLongPress = true;
+                    const word = element.dataset.word;
+                    if (word) fetchWordDictionary(word);
+                }, 380);
+            });
+
+            element.addEventListener('mouseup', () => {
+                if (timer) clearTimeout(timer);
+            });
+
+            element.addEventListener('mouseleave', () => {
+                if (timer) clearTimeout(timer);
+            });
         }
 
         /* ------------------------------------ */
         /* 🌐 在线获取单词音标、释义、短语API */
         /* ------------------------------------ */
         async function fetchWordDictionary(rawWord) {
-            // 清理单词（去标点与两端空白）
             const cleanWord = rawWord.replace(/^[^\w']+|[^\w']+$ /g, '').toLowerCase().trim();
             currentLookupWord = cleanWord;
 
@@ -910,7 +935,6 @@
                 const data = await res.json();
                 const entry = data[0];
 
-                // 1. 获取音标
                 let phonetic = entry.phonetic || '';
                 if (!phonetic && entry.phonetics && entry.phonetics.length > 0) {
                     const pWithText = entry.phonetics.find(p => p.text);
@@ -918,7 +942,6 @@
                 }
                 phoneticEl.innerText = phonetic ? phonetic : '/ IPA /';
 
-                // 2. 解析常用释义与短语例句
                 let htmlStr = '';
 
                 if (entry.meanings && entry.meanings.length > 0) {
@@ -926,7 +949,7 @@
                     
                     entry.meanings.forEach(m => {
                         const pos = m.partOfSpeech;
-                        const defObj = m.definitions[0]; // 取最常用的一条释义
+                        const defObj = m.definitions[0];
                         if (defObj) {
                             htmlStr += `<li>
                                 <div><span class="dict-pos-badge">${pos}</span>${defObj.definition}</div>
@@ -937,7 +960,6 @@
 
                     htmlStr += '</ul></div>';
 
-                    // 收集短语 / 近义词 (Synonyms)
                     let synonyms = [];
                     entry.meanings.forEach(m => {
                         if (m.synonyms && m.synonyms.length > 0) synonyms.push(...m.synonyms);
@@ -946,7 +968,7 @@
                         });
                     });
 
-                    synonyms = [...new Set(synonyms)].slice(0, 5); // 去重并取前5个
+                    synonyms = [...new Set(synonyms)].slice(0, 5);
 
                     if (synonyms.length > 0) {
                         htmlStr += `<div class="dict-section" style="margin-top: 8px;">
@@ -982,6 +1004,9 @@
         }
 
         function selectWord(chipEl) {
+            // 如果已经被选过隐藏了，则不重复塞入
+            if (chipEl.style.visibility === 'hidden') return;
+
             const emptyIdx = selectedWords.findIndex(item => item === null);
             if (emptyIdx !== -1) {
                 selectedWords[emptyIdx] = {
