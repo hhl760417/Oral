@@ -56,12 +56,41 @@
             align-items: center;
             border-bottom: 2px solid var(--border-color);
             padding-bottom: 10px;
+            gap: 10px;
         }
 
         .header h1 {
             font-size: 1.1rem;
             color: var(--primary-color);
             font-weight: 700;
+            white-space: nowrap;
+        }
+
+        /* 顶部中间：版本切换控制 */
+        .version-toggle-container {
+            display: flex;
+            align-items: center;
+            background: var(--slot-bg);
+            padding: 3px;
+            border-radius: 8px;
+            font-size: 0.8rem;
+        }
+
+        .version-btn {
+            padding: 4px 10px;
+            border: none;
+            border-radius: 6px;
+            background: transparent;
+            color: var(--text-muted);
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+
+        .version-btn.active {
+            background: #ffffff;
+            color: var(--primary-color);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
         }
 
         .controls-top {
@@ -102,6 +131,7 @@
             border-radius: 20px;
             font-size: 0.8rem;
             font-weight: 600;
+            white-space: nowrap;
         }
 
         .loading-box {
@@ -355,10 +385,10 @@
             }
 
             .header h1 {
-                font-size: 0.9rem;
+                font-size: 0.85rem;
             }
 
-            .progress-badge, .mode-btn {
+            .version-btn, .progress-badge, .mode-btn {
                 font-size: 0.7rem;
                 padding: 2px 6px;
             }
@@ -460,11 +490,18 @@
     <div class="container">
         <!-- 顶部导航与控制 -->
         <div class="header">
-            <h1>英语口语 8000 句练习</h1>
+            <h1>口语8000句</h1>
+            
+            <!-- 顶部中间：版本切换（简版 / 详版） -->
+            <div class="version-toggle-container">
+                <button class="version-btn active" id="ver-simple" onclick="switchVersion('simple')">简版</button>
+                <button class="version-btn" id="ver-detail" onclick="switchVersion('detail')">详版</button>
+            </div>
+
             <div class="controls-top">
                 <div class="mode-selector">
-                    <button class="mode-btn active" id="mode-seq" onclick="switchMode('sequence')">顺序播放</button>
-                    <button class="mode-btn" id="mode-rand" onclick="switchMode('random')">随机抽取</button>
+                    <button class="mode-btn active" id="mode-seq" onclick="switchMode('sequence')">顺序</button>
+                    <button class="mode-btn" id="mode-rand" onclick="switchMode('random')">随机</button>
                 </div>
                 <div class="progress-badge" id="progress">加载中...</div>
             </div>
@@ -513,16 +550,26 @@
                         <span class="slider"></span>
                     </div>
                 </label>
-                <!-- 下一句按钮（随时可手动切句） -->
+                <!-- 下一句按钮 -->
                 <button class="btn btn-next" id="next-btn" onclick="nextSentence()">下一句 →</button>
             </div>
         </div>
     </div>
 
     <script>
-        const CDN_URL = "https://cdn.jsdelivr.net/gh/hhl760417/Oral-English-8000-sentences-in-simple@main/%E8%8B%B1%E8%AF%AD%E5%8F%A3%E8%AF%AD8000%E5%8F%A5-%E7%AE%80%E7%89%88";
-        const PRIMARY_URL = "https://raw.githubusercontent.com/hhl760417/Oral-English-8000-sentences-in-simple/main/%E8%8B%B1%E8%AF%AD%E5%8F%A3%E8%AF%AD8000%E5%8F%A5-%E7%AE%80%E7%89%88";
+        // 数据源配置
+        const DATA_SOURCES = {
+            simple: {
+                primary: "https://raw.githubusercontent.com/hhl760417/Oral/main/simple",
+                cdn: "https://cdn.jsdelivr.net/gh/hhl760417/Oral@main/simple"
+            },
+            detail: {
+                primary: "https://raw.githubusercontent.com/hhl760417/Oral/main/detail",
+                cdn: "https://cdn.jsdelivr.net/gh/hhl760417/Oral@main/detail"
+            }
+        };
 
+        let currentVersion = 'simple'; // 默认简版
         let validSentences = [];
         let currentIndex = 0;
         let originalWords = [];
@@ -530,8 +577,22 @@
         let fullSentenceToSpeak = ''; 
         let selectedWords = [];
         let loadMode = 'sequence';
-        let autoNextEnabled = true; // 默认开启自动跳转
+        let autoNextEnabled = true;
         let autoNextTimer = null;
+
+        function switchVersion(ver) {
+            if (currentVersion === ver) return;
+            currentVersion = ver;
+
+            document.getElementById('ver-simple').classList.toggle('active', ver === 'simple');
+            document.getElementById('ver-detail').classList.toggle('active', ver === 'detail');
+
+            document.getElementById('main-practice').style.display = 'none';
+            document.getElementById('control-bar').style.display = 'none';
+            document.getElementById('loading-status').style.display = 'block';
+
+            fetchAndFilterData();
+        }
 
         function switchMode(mode) {
             loadMode = mode;
@@ -547,11 +608,15 @@
 
         async function fetchAndFilterData() {
             const statusText = document.getElementById('loading-text');
+            const source = DATA_SOURCES[currentVersion];
+
             try {
-                statusText.innerText = "正在拉取文本数据...";
-                let res = await fetch(CDN_URL);
+                statusText.innerText = `正在拉取[${currentVersion === 'simple' ? '简版' : '详版'}]文本数据...`;
+                document.getElementById('fallback-upload').style.display = 'none';
+
+                let res = await fetch(source.primary);
                 if (!res.ok) {
-                    res = await fetch(PRIMARY_URL);
+                    res = await fetch(source.cdn);
                 }
                 if (!res.ok) throw new Error(`HTTP 错误: ${res.status}`);
 
@@ -675,7 +740,6 @@
             const slotsEl = document.getElementById('answer-slots');
             slotsEl.innerHTML = '';
 
-            // 渲染填空槽位
             for (let i = 0; i < originalWords.length; i++) {
                 const slot = document.createElement('div');
                 slot.className = 'slot' + (selectedWords[i] ? ' has-word' : '');
@@ -691,7 +755,6 @@
                 slotsEl.appendChild(slot);
             }
 
-            // 如果有结尾标点，渲染固定标点元素
             if (endingPunctuation) {
                 const puncEl = document.createElement('div');
                 puncEl.className = 'ending-punctuation';
