@@ -511,98 +511,25 @@
             font-style: italic;
         }
 
-        /* 📱 手机竖屏（Portrait）专项优化 */
+        /* 📱 手机竖屏（Portrait）优化 */
         @media screen and (max-width: 600px) and (orientation: portrait) {
-            body {
-                padding: 10px 8px;
-            }
-
-            .container {
-                padding: 14px 12px;
-                gap: 14px;
-                border-radius: 14px;
-            }
-
-            .header {
-                padding-bottom: 10px;
-                gap: 6px;
-            }
-
-            .header h1 {
-                font-size: 1rem;
-            }
-
-            .version-btn, .mode-btn {
-                padding: 4px 8px;
-                font-size: 0.75rem;
-            }
-
-            .progress-badge {
-                font-size: 0.75rem;
-                padding: 4px 8px;
-            }
-
-            .row-chinese {
-                padding: 10px;
-            }
-
-            .row-chinese .label {
-                font-size: 0.7rem;
-                margin-bottom: 2px;
-            }
-
-            .row-chinese .text {
-                font-size: 1.1rem;
-            }
-
-            /* 扩充点选词区与槽位区的高度和间距，防止误触 */
-            .row-words-pool, .row-answer-slots {
-                min-height: 85px;
-                max-height: 220px;
-                padding: 10px 8px;
-                gap: 8px;
-            }
-
-            /* 触控友好：增大按钮尺寸 */
-            .word-chip {
-                padding: 8px 12px;
-                font-size: 0.95rem;
-                border-radius: 8px;
-            }
-
-            .slot {
-                min-width: 42px;
-                height: 38px;
-            }
-
-            /* 底部控件平分空间/上下排布优化 */
-            .controls-bottom {
-                flex-direction: column;
-                align-items: stretch;
-                gap: 10px;
-            }
-
-            .controls-bottom-left {
-                display: flex;
-                width: 100%;
-            }
-
-            .controls-bottom-left .btn {
-                flex: 1;
-                text-align: center;
-            }
-
-            .controls-bottom-right {
-                display: flex;
-                width: 100%;
-                justify-content: space-between;
-            }
-
-            .controls-bottom-right .btn-next {
-                flex: 1;
-                margin-left: 10px;
-                text-align: center;
-            }
+            body { padding: 10px 8px; }
+            .container { padding: 14px 12px; gap: 14px; border-radius: 14px; }
+            .header { padding-bottom: 10px; gap: 6px; }
+            .header h1 { font-size: 1rem; }
+            .version-btn, .mode-btn { padding: 4px 8px; font-size: 0.75rem; }
+            .progress-badge { font-size: 0.75rem; padding: 4px 8px; }
+            .row-chinese { padding: 10px; }
+            .row-chinese .label { font-size: 0.7rem; margin-bottom: 2px; }
+            .row-chinese .text { font-size: 1.1rem; }
+            .row-words-pool, .row-answer-slots { min-height: 85px; max-height: 220px; padding: 10px 8px; gap: 8px; }
+            .word-chip { padding: 8px 12px; font-size: 0.95rem; border-radius: 8px; }
+            .slot { min-width: 42px; height: 38px; }
+            .controls-bottom { flex-direction: column; align-items: stretch; gap: 10px; }
+            .controls-bottom-left { display: flex; width: 100%; }
+            .controls-bottom-left .btn { flex: 1; text-align: center; }
+            .controls-bottom-right { display: flex; width: 100%; justify-content: space-between; }
+            .controls-bottom-right .btn-next { flex: 1; margin-left: 10px; text-align: center; }
         }
 
         /* 📱 手机横屏微型适配 */
@@ -733,7 +660,7 @@
             }
         };
 
-        let currentVersion = 'simple'; // 默认简版
+        let currentVersion = 'simple'; 
         let validSentences = [];
         let currentIndex = 0;
         let originalWords = [];
@@ -744,6 +671,18 @@
         let autoNextEnabled = true;
         let autoNextTimer = null;
         let currentLookupWord = '';
+
+        // 🎲 无重复随机队列管理
+        let randomQueue = [];
+
+        function initRandomQueue() {
+            randomQueue = Array.from({ length: validSentences.length }, (_, i) => i);
+            // Fisher-Yates 随机洗牌算法
+            for (let i = randomQueue.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [randomQueue[i], randomQueue[j]] = [randomQueue[j], randomQueue[i]];
+            }
+        }
 
         function switchVersion(ver) {
             if (currentVersion === ver) return;
@@ -760,9 +699,15 @@
         }
 
         function switchMode(mode) {
+            if (loadMode === mode) return;
             loadMode = mode;
             document.getElementById('mode-seq').classList.toggle('active', mode === 'sequence');
             document.getElementById('mode-rand').classList.toggle('active', mode === 'random');
+
+            if (mode === 'random') {
+                initRandomQueue();
+                nextSentence();
+            }
         }
 
         function toggleAutoSwitch(checkbox) {
@@ -830,7 +775,12 @@
             document.getElementById('main-practice').style.display = 'flex';
             document.getElementById('control-bar').style.display = 'flex';
 
-            loadSentence(0);
+            if (loadMode === 'random') {
+                initRandomQueue();
+                nextSentence();
+            } else {
+                loadSentence(0);
+            }
         }
 
         function handleFileUpload(event) {
@@ -870,7 +820,7 @@
             }
 
             const rawTokens = rawEn.split(/\s+/).filter(w => w.length > 0);
-            originalWords = rawTokens.map(word => word.replace(/^[^\w']+|[^\w']+$ me/g, '').replace(/^[^\w']+|[^\w']+$ /g, '').replace(/[.,?!;:"]$/g, ''));
+            originalWords = rawTokens.map(word => word.replace(/^[^\w']+|[^\w']+$ /g, '').replace(/[.,?!;:"]$/g, ''));
 
             let shuffled = [...originalWords];
             let attempts = 0;
@@ -1197,14 +1147,17 @@
             }
         }
 
+        /* 🎲 优化后的无重复下一句判断 */
         function nextSentence() {
             if (validSentences.length === 0) return;
 
             let nextIdx;
             if (loadMode === 'random') {
-                do {
-                    nextIdx = Math.floor(Math.random() * validSentences.length);
-                } while (nextIdx === currentIndex && validSentences.length > 1);
+                if (randomQueue.length === 0) {
+                    initRandomQueue();
+                    alert("🎉 已随机练习完所有句子，开始新一轮随机！");
+                }
+                nextIdx = randomQueue.pop();
             } else {
                 nextIdx = (currentIndex + 1) % validSentences.length;
             }
