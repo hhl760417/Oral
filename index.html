@@ -56,12 +56,12 @@
             justify-content: space-between;
             align-items: center;
             border-bottom: 2px solid var(--border-color);
-            padding-bottom: 10px;
+            padding-bottom: 12px;
             gap: 10px;
         }
 
         .header h1 {
-            font-size: 1.1rem;
+            font-size: 1.15rem;
             color: var(--primary-color);
             font-weight: 700;
             white-space: nowrap;
@@ -78,7 +78,7 @@
         }
 
         .version-btn {
-            padding: 4px 10px;
+            padding: 5px 12px;
             border: none;
             border-radius: 6px;
             background: transparent;
@@ -103,13 +103,13 @@
         .mode-selector {
             display: flex;
             background: var(--slot-bg);
-            padding: 2px;
+            padding: 3px;
             border-radius: 8px;
             font-size: 0.8rem;
         }
 
         .mode-btn {
-            padding: 4px 8px;
+            padding: 5px 10px;
             border: none;
             border-radius: 6px;
             background: transparent;
@@ -128,7 +128,7 @@
         .progress-badge {
             background: #e0e7ff;
             color: var(--primary-color);
-            padding: 4px 10px;
+            padding: 5px 12px;
             border-radius: 20px;
             font-size: 0.8rem;
             font-weight: 600;
@@ -137,55 +137,57 @@
 
         .loading-box {
             text-align: center;
-            padding: 20px 16px;
+            padding: 24px 16px;
             background: #f1f5f9;
             border-radius: 12px;
             color: var(--text-muted);
-            font-size: 0.9rem;
+            font-size: 0.95rem;
         }
 
         /* 核心练习区：3行布局架构 */
         .practice-area {
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 14px;
         }
 
         /* 第一行：中文释义 */
         .row-chinese {
             background-color: #f8fafc;
             border: 1px solid var(--border-color);
-            border-radius: 10px;
-            padding: 12px;
+            border-radius: 12px;
+            padding: 14px;
             text-align: center;
             position: relative;
         }
 
         .row-chinese .label {
-            font-size: 0.7rem;
+            font-size: 0.75rem;
             text-transform: uppercase;
             color: var(--text-muted);
             letter-spacing: 0.05em;
-            margin-bottom: 2px;
+            margin-bottom: 4px;
+            display: block;
         }
 
         .row-chinese .text {
-            font-size: 1.15rem;
+            font-size: 1.2rem;
             font-weight: 600;
             color: var(--text-main);
+            line-height: 1.4;
         }
 
         /* 第二行：待点击单词 */
         .row-words-pool {
-            min-height: 60px;
-            max-height: 140px;
-            padding: 10px;
+            min-height: 70px;
+            max-height: 180px;
+            padding: 12px;
             background-color: #fafafa;
             border: 2px dashed var(--border-color);
-            border-radius: 10px;
+            border-radius: 12px;
             display: flex;
             flex-wrap: wrap;
-            gap: 8px;
+            gap: 10px;
             align-items: center;
             justify-content: center;
             overflow-y: auto;
@@ -193,15 +195,15 @@
 
         /* 第三行：填空区域 */
         .row-answer-slots {
-            min-height: 60px;
-            max-height: 140px;
-            padding: 10px;
+            min-height: 70px;
+            max-height: 180px;
+            padding: 12px;
             background-color: #fff;
             border: 1px solid var(--border-color);
-            border-radius: 10px;
+            border-radius: 12px;
             display: flex;
             flex-wrap: wrap;
-            gap: 8px;
+            gap: 10px;
             align-items: center;
             justify-content: center;
             overflow-y: auto;
@@ -211,15 +213,18 @@
             background: #ffffff;
             border: 1.5px solid var(--primary-color);
             color: var(--primary-color);
-            padding: 5px 10px;
-            border-radius: 6px;
-            font-size: 0.9rem;
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 0.95rem;
             font-weight: 500;
             cursor: pointer;
             user-select: none;
             -webkit-user-select: none;
             transition: all 0.2s ease;
             box-shadow: 0 2px 4px rgba(0,0,0,0.04);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .word-chip:hover {
@@ -228,8 +233,8 @@
         }
 
         .slot {
-            min-width: 45px;
-            height: 36px;
+            min-width: 48px;
+            height: 40px;
             border-bottom: 2.5px solid var(--text-muted);
             display: flex;
             align-items: center;
@@ -249,7 +254,7 @@
 
         /* 固定的末尾标点样式 */
         .ending-punctuation {
-            font-size: 1.2rem;
+            font-size: 1.3rem;
             font-weight: 700;
             color: var(--primary-color);
             padding: 0 2px;
@@ -264,9 +269,9 @@
 
         .feedback-message {
             text-align: center;
-            font-size: 0.85rem;
+            font-size: 0.9rem;
             font-weight: 600;
-            min-height: 20px;
+            min-height: 22px;
         }
 
         .feedback-message.success { color: var(--success-color); }
@@ -282,21 +287,21 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
             flex-wrap: wrap;
         }
 
         .controls-bottom-left, .controls-bottom-right {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
         }
 
         .btn {
-            padding: 8px 16px;
+            padding: 10px 18px;
             border: none;
-            border-radius: 8px;
-            font-size: 0.85rem;
+            border-radius: 10px;
+            font-size: 0.9rem;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.2s ease;
@@ -315,20 +320,19 @@
         .switch-container {
             display: flex;
             align-items: center;
-            gap: 6px;
-            font-size: 0.82rem;
+            gap: 8px;
+            font-size: 0.85rem;
             font-weight: 600;
             color: var(--text-muted);
             user-select: none;
             cursor: pointer;
-            margin-right: 4px;
         }
 
         .switch {
             position: relative;
             display: inline-block;
-            width: 40px;
-            height: 22px;
+            width: 44px;
+            height: 24px;
         }
 
         .switch input {
@@ -343,14 +347,14 @@
             top: 0; left: 0; right: 0; bottom: 0;
             background-color: #cbd5e1;
             transition: .3s;
-            border-radius: 22px;
+            border-radius: 24px;
         }
 
         .slider:before {
             position: absolute;
             content: "";
-            height: 16px;
-            width: 16px;
+            height: 18px;
+            width: 18px;
             left: 3px;
             bottom: 3px;
             background-color: white;
@@ -364,7 +368,7 @@
         }
 
         input:checked + .slider:before {
-            transform: translateX(18px);
+            transform: translateX(20px);
         }
 
         /* 📖 单词词典弹窗 (Modal) 样式 */
@@ -448,13 +452,13 @@
             background: #e0e7ff;
             color: var(--primary-color);
             border-radius: 50%;
-            width: 26px;
-            height: 26px;
+            width: 28px;
+            height: 28px;
             display: inline-flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            font-size: 0.85rem;
+            font-size: 0.9rem;
         }
 
         .dict-section {
@@ -505,6 +509,100 @@
             color: var(--text-muted);
             margin-top: 3px;
             font-style: italic;
+        }
+
+        /* 📱 手机竖屏（Portrait）专项优化 */
+        @media screen and (max-width: 600px) and (orientation: portrait) {
+            body {
+                padding: 10px 8px;
+            }
+
+            .container {
+                padding: 14px 12px;
+                gap: 14px;
+                border-radius: 14px;
+            }
+
+            .header {
+                padding-bottom: 10px;
+                gap: 6px;
+            }
+
+            .header h1 {
+                font-size: 1rem;
+            }
+
+            .version-btn, .mode-btn {
+                padding: 4px 8px;
+                font-size: 0.75rem;
+            }
+
+            .progress-badge {
+                font-size: 0.75rem;
+                padding: 4px 8px;
+            }
+
+            .row-chinese {
+                padding: 10px;
+            }
+
+            .row-chinese .label {
+                font-size: 0.7rem;
+                margin-bottom: 2px;
+            }
+
+            .row-chinese .text {
+                font-size: 1.1rem;
+            }
+
+            /* 扩充点选词区与槽位区的高度和间距，防止误触 */
+            .row-words-pool, .row-answer-slots {
+                min-height: 85px;
+                max-height: 220px;
+                padding: 10px 8px;
+                gap: 8px;
+            }
+
+            /* 触控友好：增大按钮尺寸 */
+            .word-chip {
+                padding: 8px 12px;
+                font-size: 0.95rem;
+                border-radius: 8px;
+            }
+
+            .slot {
+                min-width: 42px;
+                height: 38px;
+            }
+
+            /* 底部控件平分空间/上下排布优化 */
+            .controls-bottom {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 10px;
+            }
+
+            .controls-bottom-left {
+                display: flex;
+                width: 100%;
+            }
+
+            .controls-bottom-left .btn {
+                flex: 1;
+                text-align: center;
+            }
+
+            .controls-bottom-right {
+                display: flex;
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .controls-bottom-right .btn-next {
+                flex: 1;
+                margin-left: 10px;
+                text-align: center;
+            }
         }
 
         /* 📱 手机横屏微型适配 */
@@ -562,12 +660,12 @@
             </div>
         </div>
 
-        <!-- 核心练习区域：横屏3行布局 -->
+        <!-- 核心练习区域：3行布局 -->
         <div class="practice-area" id="main-practice" style="display: none;">
             
             <!-- 第一行：中文释义 -->
             <div class="row-chinese">
-                <span class="label">中文：</span>
+                <span class="label">中文释义</span>
                 <span class="text" id="chinese-text">...</span>
             </div>
 
@@ -830,9 +928,7 @@
             }
         }
 
-        /* ------------------------------------ */
-        /* 📱 修复后的长按与点击防重复触发逻辑 */
-        /* ------------------------------------ */
+        /* 📱 长按与点击防重复触发逻辑 */
         function attachLongPressEvents(element, onClickCallback) {
             let timer = null;
             let isLongPress = false;
@@ -868,7 +964,7 @@
                     const moveY = Math.abs(e.touches[0].clientY - startY);
                     if (moveX > 10 || moveY > 10) {
                         if (timer) clearTimeout(timer);
-                        isLongPress = true; // 产生拖动则取消长按和点击
+                        isLongPress = true; 
                     }
                 }
             };
@@ -879,7 +975,6 @@
             });
             element.addEventListener('touchmove', moveTouch, { passive: true });
 
-            // 针对 PC 端的 Click（防止 Touch 与 Click 叠加触发）
             element.addEventListener('click', (e) => {
                 if (touchHandled) {
                     e.preventDefault();
@@ -910,9 +1005,7 @@
             });
         }
 
-        /* ------------------------------------ */
         /* 🌐 在线获取单词音标、释义、短语API */
-        /* ------------------------------------ */
         async function fetchWordDictionary(rawWord) {
             const cleanWord = rawWord.replace(/^[^\w']+|[^\w']+$ /g, '').toLowerCase().trim();
             currentLookupWord = cleanWord;
@@ -1004,7 +1097,6 @@
         }
 
         function selectWord(chipEl) {
-            // 如果已经被选过隐藏了，则不重复塞入
             if (chipEl.style.visibility === 'hidden') return;
 
             const emptyIdx = selectedWords.findIndex(item => item === null);
